@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 import { Hero } from '../interfaces/hero.interface';
 import { environments } from '../../../environments/environments';
 
@@ -17,8 +17,7 @@ export class HeroesService {
     getHeroById(id: string): Observable<Hero | undefined> {
         return this.http_client.get<Hero>(`${this.baseUrl}/heroes/${id}`).pipe(
             catchError(error => of(undefined))
-        )
-        ;
+        );
     }
 
     getSuggestions(term: string): Observable<Hero[]> {
@@ -40,9 +39,10 @@ export class HeroesService {
     }
 
     deleteHEroById(id: string): Observable<any> {
-        return this.http_client.delete(`${this.baseUrl}/heroes/${id}`);
+        return this.http_client.delete(`${this.baseUrl}/heroes/${id}`)
+            .pipe(
+                catchError(error => of(false)),
+                map(resp => true)
+            );
     }
-    
-
-
 }
